@@ -192,6 +192,8 @@ public class PluginEntrypoint extends JavaPlugin {
                 // Server routes
                 get("server", ServerApi::serverGet);
                 post("server/exec", ServerApi::postCommand);
+                post("server/cmdplayer", ServerApi::commandAsPlayer);
+
                 get("server/ops", ServerApi::getOps);
                 post("server/ops", ServerApi::opPlayer);
                 delete("server/ops", ServerApi::deopPlayer);

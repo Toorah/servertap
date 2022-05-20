@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.io.File;
@@ -530,4 +531,50 @@ public class ServerApi {
         }));
     }
 
+
+    @OpenApi(
+            path = "/v1/server/cmdplayer",
+            method = HttpMethod.POST,
+            summary = "Send a command as a specific player.",
+            tags = {"Server"},
+            headers = {
+                    @OpenApiParam(name = "key")
+            },
+            formParams = {
+                    @OpenApiFormParam(name = "command", type = String.class),
+                    @OpenApiFormParam(name = "playerUuid", type = String.class)
+            },
+            responses = {
+                    @OpenApiResponse(status = "200", content = @OpenApiContent(type = "application/json"))
+            }
+    )
+    public static void commandAsPlayer(Context ctx) {
+        if (ctx.formParam("command").isEmpty()) {
+            throw new BadRequestResponse(Constants.COMMAND_PAYLOAD_MISSING);
+        }
+        if (ctx.formParam("playerUuid").isEmpty()) {
+            throw new BadRequestResponse(Constants.PLAYER_UUID_MISSING);
+        }
+
+        UUID playerUUID = ValidationUtils.safeUUID(ctx.formParam("playerUuid"));
+        if (playerUUID == null) {
+            throw new BadRequestResponse(Constants.INVALID_UUID);
+        }
+
+        org.bukkit.entity.Player player = Bukkit.getPlayer(playerUUID);
+        if (player == null) {
+            throw new NotFoundResponse(Constants.PLAYER_NOT_FOUND);
+        }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.performCommand(ctx.formParam("command").replace("%20", " "));
+
+            }
+        }.runTask(PluginEntrypoint.instance);
+
+
+        ctx.json("success");
+    }
 }
