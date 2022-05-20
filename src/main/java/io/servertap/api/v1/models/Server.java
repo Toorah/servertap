@@ -21,6 +21,12 @@ public class Server {
     private String bukkitVersion = null;
 
     @Expose
+    private String currentPlayerCount = null;
+
+    @Expose
+    private  String maxPlayerCount = null;
+
+    @Expose
     private String tps = null;
 
     @Expose
@@ -92,6 +98,12 @@ public class Server {
     public void setBukkitVersion(String bukkitVersion) {
         this.bukkitVersion = bukkitVersion;
     }
+
+    public  String getCurrentPlayerCount() { return  currentPlayerCount; }
+    public  void setCurrentPlayerCount(String count) { this.currentPlayerCount = count; }
+
+    public  String getMaxPlayerCount() { return  maxPlayerCount; }
+    public  void setMaxPlayerCount(String count) { this.maxPlayerCount = count; }
 
     public Set<ServerBan> getBannedIps() {
         return bannedIps;

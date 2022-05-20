@@ -122,6 +122,9 @@ public class ServerApi {
 
         server.setHealth(health);
 
+        server.setCurrentPlayerCount( Integer.toString(Bukkit.getOnlinePlayers().size()) );
+        server.setMaxPlayerCount( Integer.toString(Bukkit.getMaxPlayers()) );
+
         ctx.json(server);
     }
 
